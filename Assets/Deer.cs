@@ -22,4 +22,27 @@ public class Deer : MonoBehaviour
 
         Destroy(gameObject);
     }
+
+    void OnEnable()
+    {
+        DayNightEvents.OnNightStart += HideDeer;
+        DayNightEvents.OnDayStart += ShowDeer;
+    }
+
+    void OnDisable()
+    {
+        DayNightEvents.OnNightStart -= HideDeer;
+        DayNightEvents.OnDayStart -= ShowDeer;
+    }
+
+    void HideDeer()
+    {
+        gameObject.SetActive(false);
+    }
+
+    void ShowDeer()
+    {
+        gameObject.SetActive(true);
+    }
+
 }

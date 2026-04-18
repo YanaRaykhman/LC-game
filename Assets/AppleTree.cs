@@ -9,10 +9,15 @@ public class AppleTree : MonoBehaviour
     public int woodPerHit = 1;
     public int applesPerHit = 2;
 
+    bool active = true;
+
     public void Chop()
     {
         bool woodAdded = Inventory.instance.Add(ResourceType.Wood, woodPerHit);
         bool applesAdded = Inventory.instance.Add(ResourceType.Apple, applesPerHit);
+
+        if (!active)
+            return;
 
         if (!woodAdded && !applesAdded)
             return;
@@ -23,5 +28,27 @@ public class AppleTree : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+     void OnEnable()
+    {
+        DayNightEvents.OnNightStart += DisableResource;
+        DayNightEvents.OnDayStart += EnableResource;
+    }
+
+    void OnDisable()
+    {
+        DayNightEvents.OnNightStart -= DisableResource;
+        DayNightEvents.OnDayStart -= EnableResource;
+    }
+
+    void DisableResource()
+    {
+        active = false;
+    }
+
+    void EnableResource()
+    {
+        active = true;
     }
 }
