@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 targetPosition;
     private GameObject targetObject;
+    Tent currentTent;
 
     void Awake()
     {
@@ -17,12 +18,43 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
 {
+    /*if (SleepSystem.instance.sleeping)
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            if (currentTent != null)
+            {
+                currentTent.ExitTent(worldPos);
+                currentTent = null;
+            }
+        }
+        return;
+    }*/
+
     if (Input.GetMouseButtonDown(0))
     {
         // Если клик по UI — игнорируем движение, но UI продолжает работать
         if (EventSystem.current.IsPointerOverGameObject())
-            return;
+            return;  
+        
+        if (SleepSystem.instance.sleeping)
+        {
+            Vector3 worldPos1 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 clickPos1 = new Vector2(worldPos1.x, worldPos1.y);
 
+            if (currentTent != null)
+            {
+                currentTent.ExitTent();
+                currentTent = null;
+            }
+
+            targetObject = null;
+            targetPosition = clickPos1;
+
+            return;
+        }
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 clickPos = new Vector2(worldPos.x, worldPos.y);
 
@@ -31,13 +63,21 @@ public class PlayerMovement : MonoBehaviour
         if (hit.collider != null)
         {
             Debug.Log("Clicked: " + hit.collider.name);
-        }
 
-        if (hit.collider != null &&
-        (hit.collider.CompareTag("Tree") || hit.collider.CompareTag("Deer")))
-        {
-            targetObject = hit.collider.gameObject;
-            targetPosition = targetObject.transform.position;
+            if (
+                hit.collider.CompareTag("Tree") ||
+                hit.collider.CompareTag("Deer") ||
+                hit.collider.CompareTag("Tent")
+            )
+            {
+                targetObject = hit.collider.gameObject;
+                targetPosition = targetObject.transform.position;
+            }
+            else
+            {
+                targetObject = null;
+                targetPosition = clickPos;
+            }
         }
         else
         {
@@ -101,5 +141,22 @@ public class PlayerMovement : MonoBehaviour
             targetObject = null;
         }
 
+        Tent tent = targetObject.GetComponent<Tent>();
+
+        if (tent != null)
+        {
+            currentTent = tent;
+            tent.EnterTent();
+            targetObject = null;
+        }
+
     }
+
+    public void StopMovement()
+    {
+        rb.linearVelocity = Vector2.zero;
+        targetObject = null;
+        targetPosition = rb.position;
+    }
+
 }
