@@ -9,85 +9,87 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 targetPosition;
     private GameObject targetObject;
-    Tent currentTent;
+
+    private Tent currentTent;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        targetPosition = rb.position;
     }
 
     void Update()
-{
-    /*if (SleepSystem.instance.sleeping)
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            if (currentTent != null)
-            {
-                currentTent.ExitTent(worldPos);
-                currentTent = null;
-            }
+            HandleClick();
         }
-        return;
-    }*/
+    }
 
-    if (Input.GetMouseButtonDown(0))
+    void HandleClick()
     {
-        // Если клик по UI — игнорируем движение, но UI продолжает работать
         if (EventSystem.current.IsPointerOverGameObject())
-            return;  
-        
-        if (SleepSystem.instance.sleeping)
-        {
-            Vector3 worldPos1 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 clickPos1 = new Vector2(worldPos1.x, worldPos1.y);
-
-            if (currentTent != null)
-            {
-                currentTent.ExitTent();
-                currentTent = null;
-            }
-
-            targetObject = null;
-            targetPosition = clickPos1;
-
             return;
-        }
+
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 clickPos = new Vector2(worldPos.x, worldPos.y);
 
+        if (SleepSystem.instance.sleeping)
+        {
+            HandleSleepClick(clickPos);
+            return;
+        }
+
+        HandleNormalClick(clickPos);
+    }
+
+    void HandleSleepClick(Vector2 clickPos)
+    {
+        if (currentTent != null)
+        {
+            currentTent.ExitTent();
+            currentTent = null;
+        }
+
+        targetObject = null;
+        targetPosition = clickPos;
+    }
+
+    void HandleNormalClick(Vector2 clickPos)
+    {
         RaycastHit2D hit = Physics2D.Raycast(clickPos, Vector2.zero);
 
         if (hit.collider != null)
         {
             Debug.Log("Clicked: " + hit.collider.name);
 
-            if (
-                hit.collider.CompareTag("Tree") ||
-                hit.collider.CompareTag("Deer") ||
-                hit.collider.CompareTag("Tent")
-            )
+            if (IsInteractable(hit.collider))
             {
                 targetObject = hit.collider.gameObject;
                 targetPosition = targetObject.transform.position;
-            }
-            else
-            {
-                targetObject = null;
-                targetPosition = clickPos;
+                return;
             }
         }
-        else
-        {
-            targetObject = null;
-            targetPosition = clickPos;
-        }
+
+        targetObject = null;
+        targetPosition = clickPos;
     }
-}
+
+    bool IsInteractable(Collider2D col)
+    {
+        return col.CompareTag("Tree") ||
+               col.CompareTag("Deer") ||
+               col.CompareTag("Tent") ||
+               col.CompareTag("BerryBush") ||
+               col.CompareTag("AppleTree");
+    }
 
     void FixedUpdate()
+    {
+        Move();
+    }
+
+    void Move()
     {
         Vector2 direction = targetPosition - rb.position;
 
@@ -97,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (targetObject != null)
             {
-                TryChop();
+                TryInteract();
             }
 
             return;
@@ -106,50 +108,33 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = direction.normalized * speed;
     }
 
-    void TryChop()
+    void TryInteract()
     {
-        TreeResource tree = targetObject.GetComponent<TreeResource>();
+        if (targetObject == null) return;
 
-        if (tree != null)
+        if (targetObject.TryGetComponent(out TreeResource tree))
         {
             tree.Chop();
-            targetObject = null;
-            return;
         }
-
-        AppleTree appleTree = targetObject.GetComponent<AppleTree>();
-
-        if (appleTree != null)
+        else if (targetObject.TryGetComponent(out AppleTree appleTree))
         {
             appleTree.Chop();
-            targetObject = null;
         }
-
-        BerryBush berryBush = targetObject.GetComponent<BerryBush>();
-
-        if (berryBush != null)
+        else if (targetObject.TryGetComponent(out BerryBush berryBush))
         {
             berryBush.Chop();
-            targetObject = null;
         }
-
-        Deer deer = targetObject.GetComponent<Deer>();
-
-        if (deer != null)
+        else if (targetObject.TryGetComponent(out Deer deer))
         {
             deer.Hunt();
-            targetObject = null;
         }
-
-        Tent tent = targetObject.GetComponent<Tent>();
-
-        if (tent != null)
+        else if (targetObject.TryGetComponent(out Tent tent))
         {
             currentTent = tent;
             tent.EnterTent();
-            targetObject = null;
         }
 
+        targetObject = null;
     }
 
     public void StopMovement()
@@ -158,5 +143,4 @@ public class PlayerMovement : MonoBehaviour
         targetObject = null;
         targetPosition = rb.position;
     }
-
 }
