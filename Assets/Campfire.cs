@@ -10,6 +10,7 @@ public class Campfire : MonoBehaviour
     public float heat = 100f;
     public float heatDecayPerSecond = 2f;
     public float heatPerWood = 20f;
+    public float safeRadius = 5f;
 
     [Header("Interaction")]
     public float interactionDistance = 2f;

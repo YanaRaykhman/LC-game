@@ -4,6 +4,7 @@ using UnityEngine.Rendering.Universal;
 public class DayNightManager : MonoBehaviour
 {
     public static DayNightManager instance;
+    public WolfSpawner wolfSpawner;
 
     [Header("Time")]
     public float dayDuration = 180f;
@@ -60,6 +61,8 @@ public class DayNightManager : MonoBehaviour
 
         dayCount++;
 
+        wolfSpawner.RemoveAllWolves();
+
         DayNightEvents.DayStarted();
     }
 
@@ -72,6 +75,8 @@ public class DayNightManager : MonoBehaviour
 
         innerFireLight.enabled = true;
         outerFireLight.enabled = true;
+
+        wolfSpawner.SpawnWolves(dayCount);
 
         DayNightEvents.NightStarted();
         Debug.Log("NIGHT STARTED");
