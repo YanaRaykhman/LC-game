@@ -8,6 +8,8 @@ public class Deer : MonoBehaviour
 
     public GameObject deerSprite;
 
+    bool active = true;
+
     void OnMouseDown()
     {
         Hunt();
@@ -15,6 +17,9 @@ public class Deer : MonoBehaviour
 
     public void Hunt()
     {
+        if (!active)
+            return;
+
         float roll = Random.value;
 
         if (roll <= huntChance)
@@ -40,11 +45,13 @@ public class Deer : MonoBehaviour
     void HideDeer()
     {
         deerSprite.SetActive(false);
+        active = false;
     }
 
     void ShowDeer()
     {
         deerSprite.SetActive(true);
+        active = true;
     }
 
 }
