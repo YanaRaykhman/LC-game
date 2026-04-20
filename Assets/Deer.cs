@@ -6,6 +6,8 @@ public class Deer : MonoBehaviour
 
     public int fleshAmount = 1;
 
+    public GameObject deerSprite;
+
     void OnMouseDown()
     {
         Hunt();
@@ -37,12 +39,12 @@ public class Deer : MonoBehaviour
 
     void HideDeer()
     {
-        gameObject.SetActive(false);
+        deerSprite.SetActive(false);
     }
 
     void ShowDeer()
     {
-        gameObject.SetActive(true);
+        deerSprite.SetActive(true);
     }
 
 }
