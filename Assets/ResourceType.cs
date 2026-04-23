@@ -6,5 +6,6 @@ public enum ResourceType
     Berry,
     Flesh,
     Meat,
-    Coal
+    Coal,
+    Crystal
 }

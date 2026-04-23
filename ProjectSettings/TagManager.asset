@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 3
   tags:
   - Tree
+  - Deer
+  - Tent
+  - BerryBush
+  - AppleTree
+  - Mountain
   layers:
   - Default
   - TransparentFX

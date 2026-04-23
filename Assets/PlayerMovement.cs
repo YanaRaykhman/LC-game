@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
 
     private Tent currentTent;
 
+    bool interactionDone = false;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -33,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 clickPos = new Vector2(worldPos.x, worldPos.y);
+
+        interactionDone = false;
 
         if (SleepSystem.instance.sleeping)
         {
@@ -81,7 +85,8 @@ public class PlayerMovement : MonoBehaviour
                col.CompareTag("Deer") ||
                col.CompareTag("Tent") ||
                col.CompareTag("BerryBush") ||
-               col.CompareTag("AppleTree");
+               col.CompareTag("AppleTree") ||
+               col.CompareTag("Mountain");
     }
 
     void FixedUpdate()
@@ -97,8 +102,9 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
 
-            if (targetObject != null)
+            if (targetObject != null && !interactionDone)
             {
+                interactionDone = true;
                 TryInteract();
             }
 
@@ -132,6 +138,10 @@ public class PlayerMovement : MonoBehaviour
         {
             currentTent = tent;
             tent.EnterTent();
+        }
+        else if (targetObject.TryGetComponent(out Mountain mountain))
+        {
+            mountain.Chop();
         }
 
         targetObject = null;

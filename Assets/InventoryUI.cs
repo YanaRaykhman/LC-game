@@ -15,6 +15,7 @@ public class InventoryUI : MonoBehaviour
     public GameObject fleshIconPrefab;
     public GameObject meatIconPrefab;
     public GameObject coalIconPrefab;
+    public GameObject crystalIconPrefab;
 
     List<GameObject> icons = new List<GameObject>();
 
@@ -44,6 +45,7 @@ public class InventoryUI : MonoBehaviour
         CreateIcons(ResourceType.Berry, Inventory.instance.Get(ResourceType.Berry));
         CreateIcons(ResourceType.Flesh, Inventory.instance.Get(ResourceType.Flesh));
         CreateIcons(ResourceType.Meat, Inventory.instance.Get(ResourceType.Meat));
+        CreateIcons(ResourceType.Crystal, Inventory.instance.Get(ResourceType.Crystal));
     }
 
     void CreateIcons(ResourceType type, int amount)
@@ -72,6 +74,7 @@ public class InventoryUI : MonoBehaviour
             case ResourceType.Berry: return berryIconPrefab;
             case ResourceType.Flesh: return fleshIconPrefab;
             case ResourceType.Meat: return meatIconPrefab;
+            case ResourceType.Crystal: return crystalIconPrefab;
         }
 
         return woodIconPrefab;
