@@ -133860,8 +133860,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayNightManager
   wolfSpawner: {fileID: 1419632572}
-  dayDuration: 60
-  nightDuration: 60
+  dayDuration: 500
+  nightDuration: 10
   isNight: 0
   dayCount: 0
   globalLight: {fileID: 619394801}

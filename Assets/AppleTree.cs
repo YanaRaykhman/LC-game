@@ -13,11 +13,12 @@ public class AppleTree : MonoBehaviour
 
     public void Chop()
     {
+        if (!active)
+            return;
+
         bool woodAdded = Inventory.instance.Add(ResourceType.Wood, woodPerHit);
         bool applesAdded = Inventory.instance.Add(ResourceType.Apple, applesPerHit);
 
-        if (!active)
-            return;
 
         if (!woodAdded && !applesAdded)
             return;
