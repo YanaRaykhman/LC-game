@@ -115,7 +115,7 @@ public class Campfire : MonoBehaviour
 
         if (currentLevel == CampfireLevel.Beacon)
         {
-            //GameManager.instance.WinGame();
+            YouWin();
         }
     }
 
@@ -172,6 +172,11 @@ public class Campfire : MonoBehaviour
 
         GameOverUI.instance.Show();
 
+        Time.timeScale = 0;
+    }
+        void YouWin()
+    {
+        YouWinUI.instance.Show();
         Time.timeScale = 0;
     }
 }
