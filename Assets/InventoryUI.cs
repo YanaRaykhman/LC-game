@@ -63,7 +63,7 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    GameObject GetPrefab(ResourceType type)
+    public GameObject GetPrefab(ResourceType type)
     {
         switch (type)
         {

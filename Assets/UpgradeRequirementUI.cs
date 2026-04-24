@@ -9,10 +9,14 @@ public class UpgradeRequirementUI : MonoBehaviour
     public ResourceType resourceType;
     public int remainingAmount;
 
-    public void Setup(ResourceType type, int amount)
+    public void Setup(ResourceType type, int amount, Sprite iconSprite)
     {
         resourceType = type;
         remainingAmount = amount;
+
+        if (icon != null)
+            icon.sprite = iconSprite;
+
         UpdateUI();
     }
 
@@ -24,6 +28,7 @@ public class UpgradeRequirementUI : MonoBehaviour
 
     void UpdateUI()
     {
-        amountText.text = "X " + remainingAmount;
+        if (amountText != null)
+            amountText.text = "X " + remainingAmount;
     }
 }

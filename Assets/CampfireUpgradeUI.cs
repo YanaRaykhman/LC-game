@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class CampfireUpgradeUI : MonoBehaviour
+public class CampfireUpgradeUI : MonoBehaviour 
 {
+    //public InventoryUI inventoryUI;
     public static CampfireUpgradeUI instance;
 
     public GameObject panel;
@@ -21,6 +22,7 @@ public class CampfireUpgradeUI : MonoBehaviour
     void Awake()
     {
         instance = this;
+       // inventoryUI = InventoryUI.instance;
         panel.SetActive(false);
     }
 
@@ -65,8 +67,30 @@ public class CampfireUpgradeUI : MonoBehaviour
     void CreateRequirement(ResourceType type, int amount)
     {
         GameObject obj = Instantiate(requirementPrefab, requirementsParent);
+
         var req = obj.GetComponent<UpgradeRequirementUI>();
-        req.Setup(type, amount);
+        Debug.Log("Bug 0");
+
+        GameObject iconPrefab = InventoryUI.instance.GetPrefab(type);
+
+        Debug.Log("Bug 1");
+
+        Image iconImage = iconPrefab.GetComponentInChildren<Image>();
+
+        Debug.Log("Bug 2");
+
+        Sprite icon = iconImage.sprite;
+
+        Debug.Log("Bug 3");
+       /* Sprite icon = inventoryUI
+            .GetPrefab(type)
+            .GetComponentInChildren<UnityEngine.UI.Image>()
+            .sprite;*/
+
+        Debug.Log("Icon have to be added");
+
+        req.Setup(type, amount, icon);
+
         requirements.Add(req);
     }
 
@@ -87,13 +111,6 @@ public class CampfireUpgradeUI : MonoBehaviour
                     coalAdded++;
                 if (req.resourceType == ResourceType.Crystal)
                     crystalAdded++;
-                /*switch (type)
-                {
-                    case ResourceType.Wood: woodAdded++;
-                    case Stone:  stoneAdded++;
-                    case Crystal: crystalAdded++;
-                    case Coal: coalAdded++;
-                }*/
                 return true;
             }
         }
