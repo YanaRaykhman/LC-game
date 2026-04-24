@@ -7,7 +7,6 @@ public class ResourceDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     Transform startParent;
 
     Canvas canvas;
-
     ResourceIcon icon;
 
     void Start()
@@ -31,28 +30,45 @@ public class ResourceDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (Campfire.instance != null && Campfire.instance.PlayerInRange())
+        bool used = false;
+
+        // режим апгрейда
+        if (CampfireUpgradeUI.instance != null && CampfireUpgradeUI.instance.IsOpen())
         {
-            bool removed = Inventory.instance.Remove(icon.resourceType, 1);
+            used = CampfireUpgradeUI.instance.TryAddResource(icon.resourceType);
 
-            if (removed)
+            if (used)
             {
-                if (icon.resourceType == ResourceType.Wood)
-                {
-                    Campfire.instance.AddWood();
-                }
-
-                if (icon.resourceType == ResourceType.Flesh)
-                {
-                    Campfire.instance.CookMeat();
-                }
-
-                Destroy(gameObject);
-                return;
+                Inventory.instance.Remove(icon.resourceType, 1);
             }
         }
 
-        ReturnToSlot();
+        // обычный костёр
+        else if (Campfire.instance != null && Campfire.instance.PlayerInRange())
+        {
+            if (icon.resourceType == ResourceType.Wood)
+            {
+                Campfire.instance.AddWood();
+                Inventory.instance.Remove(ResourceType.Wood, 1);
+                used = true;
+            }
+
+            if (icon.resourceType == ResourceType.Flesh)
+            {
+                Campfire.instance.CookMeat();
+                Inventory.instance.Remove(ResourceType.Flesh, 1);
+                used = true;
+            }
+        }
+
+        if (used)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            ReturnToSlot();
+        }
     }
 
     void ReturnToSlot()

@@ -9,3 +9,4 @@ public enum ResourceType
     Coal,
     Crystal
 }
+
